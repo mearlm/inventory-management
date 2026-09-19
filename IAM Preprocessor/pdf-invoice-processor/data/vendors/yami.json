@@ -1,0 +1,26 @@
+{
+  "vendor_name": "Yami",
+  "header_fields": {
+    "Order #:": "invoice_number",
+    "Order Date:": "invoice_date"
+  },
+  "currency": "USD",
+  "order_number_pattern": "Order #:\\s*(?P<value>\\S+)",
+  "order_date_pattern": "Order Date:\\s*(?P<value>.+)",
+  "item_start_pattern": "^(?P<item_id>\\d{10,})$",
+  "quantity_pattern": "^\\d+$",
+  "unit_price_pattern": "^\\$(?P<value>[\\d,]+\\.\\d{2})$",
+  "total_price_pattern": "^\\$(?P<value>[\\d,]+\\.\\d{2})$",
+  "page_break_patterns": [
+    "^\\d{2}/\\d{2}/\\d{4}$",
+    "^\\d+/\\d+$"
+  ],
+  "summary_fields": {
+    "Subtotal": "subtotal",
+    "Shipping": "shipping",
+    "Discount": "discount",
+    "Other Fee": "other_fee",
+    "Tax": "tax",
+    "Total": "total"
+  }
+}

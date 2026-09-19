@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Yami Invoice",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pdf_invoice_processor.cli",
+      "cwd": "${workspaceFolder}/pdf-invoice-processor",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/pdf-invoice-processor/src"
+      },
+      "args": [
+        "${workspaceFolder}/pdf-invoice-processor/tests/data/yami/2026060836808.pdf",
+        "${workspaceFolder}/pdf-invoice-processor/tests/data/yami/debug_output.csv",
+        "--vendor",
+        "yami"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}
