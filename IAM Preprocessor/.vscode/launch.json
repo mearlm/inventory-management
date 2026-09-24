@@ -11,8 +11,8 @@
         "PYTHONPATH": "${workspaceFolder}/pdf-invoice-processor/src"
       },
       "args": [
-        "${workspaceFolder}/pdf-invoice-processor/tests/data/yami/2026060836808.pdf",
-        "${workspaceFolder}/pdf-invoice-processor/tests/data/yami/debug_output.csv",
+        "/Users/memcghan/Library/CloudStorage/GoogleDrive-memcghan@gmail.com/.shortcut-targets-by-id/1fEPa1UBajGBzwwefkweqCaVRsP4MSwDa/_Seoulful Bites - Ramen/5. Financials/Receipts & Invoices/Yami/",
+        "${workspaceFolder}/pdf-invoice-processor/tests/output",
         "--vendor",
         "yami"
       ],
