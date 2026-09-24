@@ -1,13 +1,10 @@
 import argparse
 import json
-import os
 from pathlib import Path
 
-from pdf_invoice_processor.pdf_reader import read_pdf
-from pdf_invoice_processor.extractor import extract_invoice_data
-from pdf_invoice_processor.parser import parse_data
-from pdf_invoice_processor.validator import validate_invoice
-from pdf_invoice_processor.csv_exporter import export_to_csv
+from pdf_invoice_processor.reporting import print_session_summary
+from pdf_invoice_processor.publish_batch import publish_batch
+from pdf_invoice_processor.process_batch import process_batch
 from .vendor_config import VendorConfig
 
 
@@ -41,56 +38,62 @@ def load_vendor_config(vendor_name: str) -> VendorConfig:
     return config
 
 
-def main():
+def parse_arguments():
     parser = argparse.ArgumentParser(description="Process PDF invoices.")
-    parser.add_argument('input', type=str, help='Path to the input PDF file')
-    parser.add_argument('output', type=str, help='Path to the output CSV file')
     parser.add_argument(
-        '--vendor',
+        "input",
         type=str,
-        help='Vendor name used to load data/vendors/<vendor>.json',
+        help="Path to the input PDF file or directory containing PDF files",
+    )
+    parser.add_argument(
+        "output",
+        type=str,
+        help="Directory where processed CSV output files will be written",
+    )
+    parser.add_argument(
+        "--vendor",
+        type=str,
+        required=True,
+        help="Vendor name used to load data/vendors/<vendor>.json",
     )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    if args.input:
-        input_files = args.input
-    else:
-        input_files = choose_pdf_files()
 
-    if args.vendor:
-        vendor_name = args.vendor
-    else:
-        vendor_name = choose_vendor_config()
+def resolve_input_files(args) -> list[Path]:
+    input_path = Path(args.input)
 
-    config = load_vendor_config(vendor_name)
+    if input_path.is_file() and input_path.suffix.lower() == ".pdf":
+        return [input_path]
 
-    if not os.path.exists(input_files):
-        print(f"Error: The file {input_files} does not exist.")
-        return
+    if input_path.is_dir():
+        pdf_files = sorted(input_path.glob("*.pdf"), key=lambda p: p.name.lower())
+        if not pdf_files:
+            raise FileNotFoundError(
+                f"No PDF files found in directory: {input_path}"
+            )
+        return pdf_files
 
-    # Read PDF
-    raw_text = read_pdf(input_files)
-
-    # Extract data
-    extracted_data = extract_invoice_data(raw_text, config)
-
-    # Parse data
-    structured_data = parse_data(extracted_data)
-
-    # Validate data
-    is_valid, validation_message = validate_invoice(structured_data)
-
-    if not is_valid:
-        print(f"Error: Invoice validation failed: {validation_message}")
-        return
-
-    # Export to CSV
-    export_to_csv(structured_data, args.output)
-    print(f"Data successfully exported to {args.output}")
-    print(
-        f"Validation passed for {len(structured_data['items'])} items.\nData exported to {args.output}"
+    raise ValueError(
+        f"Invalid input path: {input_path}. "
+        "Must be a PDF file or a directory containing PDF files."
     )
+
+
+def main():
+    args = parse_arguments()
+    output_path = Path(args.output)
+
+    config = load_vendor_config(args.vendor)
+    input_files = resolve_input_files(args)
+
+    invoices, stats = process_batch(input_files, config)
+
+    artifacts = publish_batch(invoices, output_path)
+
+    print_session_summary(stats, artifacts, output_path)
+
+
 
 
 if __name__ == "__main__":

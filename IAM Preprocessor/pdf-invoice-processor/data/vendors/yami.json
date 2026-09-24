@@ -21,6 +21,9 @@
     "Discount": "discount",
     "Other Fee": "other_fee",
     "Tax": "tax",
+    "Import Fee": "import_fee",
+    "Points": "points",
+    "Gift Card": "gift_card",
     "Total": "total"
   }
 }

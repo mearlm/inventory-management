@@ -1,7 +1,8 @@
 from decimal import Decimal
+from .models import InvoiceData
 
 
-def validate_invoice(invoice_data):
+def validate_invoice(invoice_data: InvoiceData) -> tuple[bool, str]:
     total_calculated = Decimal("0.00")
 
     for item in invoice_data.get("items", []):
@@ -33,7 +34,10 @@ def validate_invoice(invoice_data):
         + summary.get("shipping", Decimal("0.00"))
         + summary.get("discount", Decimal("0.00"))
         + summary.get("other_fee", Decimal("0.00"))
+        + summary.get("import_fee", Decimal("0.00"))
         + summary.get("tax", Decimal("0.00"))
+        + summary.get("points", Decimal("0.00"))
+        + summary.get("gift_card", Decimal("0.00"))
     )
 
     invoice_total = summary.get("total", Decimal("0.00"))
