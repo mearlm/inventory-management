@@ -1,6 +1,7 @@
 import unittest
 from pdf_invoice_processor.extractor import extract_event_header, identify_item_boundaries, assemble_wrapped_descriptions
 
+
 class TestExtractor(unittest.TestCase):
 
     def test_extract_event_header(self):

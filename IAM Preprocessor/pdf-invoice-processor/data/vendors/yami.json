@@ -25,5 +25,16 @@
     "Points": "points",
     "Gift Card": "gift_card",
     "Total": "total"
-  }
+  },
+  "description_skip_blocks": [
+    {
+      "start": "^Payment Method$",
+      "end": "^Service Hours:"
+    }
+  ],
+  "description_stop_patterns": [
+    "^Thank you for shopping with Yami!$",
+    "^Service Hours:",
+    "^Phone: "
+  ]
 }

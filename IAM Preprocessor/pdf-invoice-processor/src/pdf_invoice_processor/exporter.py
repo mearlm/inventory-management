@@ -41,7 +41,7 @@ def export_activity_lines(
             header = invoice["header"]
 
             for sequence, item in enumerate(
-invoice["items"],
+                invoice["items"],
                 start=1,
             ):
                 writer.writerow({
@@ -50,7 +50,7 @@ invoice["items"],
                     "Invoice #":
                         header.get("invoice_number", ""),
                     "Invoice Date":
-                        header.get("invoice_date", ""),
+                        header.get("invoice_date", "").replace(",", ""),
                     "Source File":
                         processed["source_file"],
                     "Item Sequence":
@@ -89,6 +89,9 @@ def export_activity_headers(
         "Discount",
         "Other Fee",
         "Tax",
+        "Import Fee",
+        "Points",
+        "Gift Card",
         "Total",
         "Invoice Status",
         "Invoice Status Message",
@@ -134,6 +137,12 @@ def export_activity_headers(
                     summary.get("other_fee", ""),
                 "Tax":
                     summary.get("tax", ""),
+                "Import Fee":
+                    summary.get("import_fee", ""),
+                "Points":
+                    summary.get("points", ""),
+                "Gift Card":
+                    summary.get("gift_card", ""),
                 "Total":
                     summary.get("total", ""),
                 "Invoice Status":

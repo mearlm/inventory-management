@@ -1,0 +1,15 @@
+1. In the exporter, for YAMI datetime values (Invoice Date) the string includes an extraneous comma.  I'd like to export this is an Excel compatible form, e.g. mm/dd/yyyy hh:mm (no comma) to ease Excel conversion to it's own datetime value.
+   Since not all vendors may use the same string style as YAMI, converting these into Python datetime objects where we can control the output form would be best.:we
+2. Description info contaminated (YAMI Invoice # 2026070896910, Item ID 1016008491; 2026070896913.3018225591; 2026060836811.3022739245; 2026060836814.3018211231; 2026061638517.1020006661, 2026060836811.3022739245):
+   PEPERO White Chocolate Cookie Biscuit Stick ,4 Pack Payment Method Credit Card Billed to Michael McGhan 15036 Emerald Sunset Ln, Reno, NV 89521, United States Subtotal $975.78 Shipping $0.00 Discount -$0.00 Other Fee $0.00 Total Before Tax $975.78 Tax $0.00 Points -$0.00 Gift Card -$0.00 Total $975.78 Thank you for shopping with Yami! Contact Us Phone: 1-800-407-9710 E-Mail: help@yami.com, usually respond within 1~3 business day. Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953 4.51 oz#Stray Kids Pick# #Packing May Vary#
+   Tokping Matcha Blossom 1.52 oz #Limited Edition# Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953
+   [GIFT] Yuzu Vitamin C Bright Eye Cream 15ml Phone: 1-800-407-9710 E-Mail: help@yami.com, usually respond within 1~3 business day. Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953
+   KitKat Mini Lotus, 16.6g Payment Method Credit Card Billed to Michael McGhan 15036 Emerald Sunset Ln, Reno, NV 89521, United States Subtotal $592.10 Shipping $0.00 Discount -$0.00 Other Fee $0.00 Total Before Tax $592.10 Tax $0.00 Points -$0.00 Gift Card -$0.00 Total $592.10 Thank you for shopping with Yami! Contact Us Phone: 1-800-407-9710 E-Mail: help@yami.com, usually respond within 1~3 business day. Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953
+   Sac Sac Orange Juice,Korean Mandarin Pulps,8.05 fl oz Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953
+   [GIFT] Yuzu Vitamin C Bright Eye Cream 15ml Phone: 1-800-407-9710 E-Mail: help@yami.com, usually respond within 1~3 business day. Service Hours: Mon ~ Fri 7:00AM - 12:30AM PT, for holiday service hours, please refers to www.yami.com/article/473953
+3. This also suggests a useful future summary field:
+      "tax": Decimal(...)
+      "taxable_base": Decimal(...) | None
+      "tax_allocation_status": "KNOWN" | "UNKNOWN"
+   For fully taxed invoices, taxable_base can be inferred from the summary. For partially taxed Yami invoices without item markers, it remains None.
+   So I think the right principle is: extract the tax exactly, validate the invoice exactly, but do not invent the line/category allocation when the source does not support it. That is precisely the sort of thing your REVIEW state is for.

@@ -1,3 +1,4 @@
+from logging import config
 import re
 from decimal import Decimal
 from shlex import join
@@ -69,6 +70,28 @@ def extract_event_header(
 
     return header, item_start, summary_start
 
+
+def _skip_known_document_block(
+    lines: list[str],
+    start_index: int,
+    config: VendorConfig,
+) -> int:
+    skip_blocks = config.get("description_skip_blocks", [])
+
+    for block in skip_blocks:
+        if not re.search(block["start"], lines[start_index]):
+            continue
+
+        j = start_index + 1
+
+        while j < len(lines):
+            if re.search(block["end"], lines[j]):
+                return j + 1
+            j += 1
+
+        return j
+
+    return start_index
 
 def extract_items(
     lines: list[str],
@@ -144,28 +167,45 @@ def extract_items(
             "status_message": "",
         }
         items.append(item)
-
         i += 3
 
-        continuation_lines = []
         j = i
+        stop_patterns = config.get("description_stop_patterns", [])
 
-        # Skip known page-break boilerplate.
-        while (
-            j < len(lines)
-            and _is_page_boilerplate(lines[j], config)
-        ):
-            j += 1
-
-        # If what follows is neither a new item nor a known section label,
-        # treat it as continuation text for the item just completed.
+        continuation_lines = []
         while j < len(lines):
+            # Next item: continuation is finished.
             if item_start_pattern.match(lines[j]):
                 break
 
-            if lines[j] in config.get("section_labels", []):
+            if any(
+                re.search(pattern, lines[j])
+                for pattern in stop_patterns
+            ):
                 break
 
+            # Ignore page-break boilerplate.
+            if _is_page_boilerplate(lines[j], config):
+                j += 1
+                continue
+
+            # Ignore known non-description document blocks.
+            skipped_to = _skip_known_document_block(
+                lines,
+                j,
+                config,
+            )
+
+            if skipped_to != j:
+                j = skipped_to
+                continue
+
+            # Ignore individual known section labels if needed.
+            if lines[j] in config.get("section_labels", []):
+                j += 1
+                continue
+
+            # Otherwise this is continuation text.
             continuation_lines.append(lines[j])
             j += 1
 
