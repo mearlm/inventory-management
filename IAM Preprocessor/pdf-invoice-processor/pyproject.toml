@@ -2,7 +2,7 @@
 name = "pdf-invoice-processor"
 version = "0.1.0"
 description = "A project to process PDF invoices, extract relevant data, and export it to CSV."
-authors = ["Your Name <your.email@example.com>"]
+authors = mike@seoulfulbitesreno.com
 license = "MIT"
 
 [tool.poetry.dependencies]
