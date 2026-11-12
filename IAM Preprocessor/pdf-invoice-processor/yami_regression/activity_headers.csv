@@ -1,0 +1,2 @@
+Vendor,Invoice #,Invoice Date,Source File,Item Count,Subtotal,Shipping,Discount,Other Fee,Tax,Import Fee,Points,Gift Card,Total,Invoice Status,Invoice Status Message,Validation Status,Validation Message
+Yami,2026060836808,"06/08/2026, 3:02 PM",tests/data/yami/2026060836808.pdf,100,2305.64,0.00,-229.32,0.00,2.67,,-0.00,-0.00,2078.99,READY,,READY,

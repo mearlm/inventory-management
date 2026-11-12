@@ -154,3 +154,22 @@ def export_activity_headers(
                 "Validation Message":
                     processed["validation_message"],
             })
+
+def export_activity_payments(invoices: list[ProcessedInvoice], output_file: Path) -> None:
+    fields = ["Vendor", "Invoice #", "Invoice Date", "Source File",
+              "Payment Sequence", "Payment Date", "Payment Method", "Last 4", "Amount",
+              "Status", "Status Message"]
+    with output_file.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        for processed in invoices:
+            header = processed["invoice"]["header"]
+            for seq, payment in enumerate(processed["invoice"].get("payments", []), 1):
+                writer.writerow({"Vendor": header.get("vendor", ""),
+                    "Invoice #": header.get("invoice_number", ""),
+                    "Invoice Date": header.get("invoice_date", ""),
+                    "Source File": processed["source_file"],
+                    "Payment Sequence": seq, "Payment Date": payment["payment_date"],
+                    "Payment Method": payment["payment_method"], "Last 4": payment["last4"],
+                    "Amount": payment["amount"], "Status": processed["status"],
+                    "Status Message": processed["status_message"]})

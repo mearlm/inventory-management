@@ -4,7 +4,8 @@ from .models import ProcessedInvoice, InvoiceStats
 
 def process_batch(
     input_files: list[str],
-    config: VendorConfig,
+    config: VendorConfig | None = None,
+    vendor: str = "",
 ) -> tuple[list[ProcessedInvoice], InvoiceStats]:
 
     invoices: list[ProcessedInvoice] = []
@@ -19,7 +20,7 @@ def process_batch(
     }
     
     for input_file in input_files:
-        invoice: ProcessedInvoice = process_invoice(input_file, config)
+        invoice: ProcessedInvoice = process_invoice(input_file, config, vendor=vendor)
         invoices.append(invoice)
 
         stats["processed"] += 1

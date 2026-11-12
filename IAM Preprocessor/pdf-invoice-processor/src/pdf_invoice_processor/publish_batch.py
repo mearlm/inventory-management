@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .exporter import export_activity_headers, export_activity_lines
+from .exporter import export_activity_headers, export_activity_lines, export_activity_payments
 from .models import ProcessedInvoice
 
 def publish_batch(
@@ -26,7 +26,9 @@ def publish_batch(
         line_file,
     )
 
-    return [
-        header_file,
-        line_file,
-    ]
+    artifacts = [header_file, line_file]
+    if any(invoice["invoice"].get("payments") for invoice in invoices):
+        payment_file = output_path / "activity_payments.csv"
+        export_activity_payments(invoices, payment_file)
+        artifacts.append(payment_file)
+    return artifacts

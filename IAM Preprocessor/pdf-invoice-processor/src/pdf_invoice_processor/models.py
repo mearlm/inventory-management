@@ -29,14 +29,22 @@ class InvoiceSummary(TypedDict, total=False):
     status: str
     status_message: str
 
+class InvoicePayment(TypedDict, total=False):
+    payment_date: str
+    payment_method: str
+    last4: str
+    amount: float
+
 class ExtractedInvoiceData(TypedDict):
     header: InvoiceHeader
     items: list[InvoiceItem]
     summary: InvoiceSummary
     status: str
     status_message: str
+    payments: list[InvoicePayment]
 
 class InvoiceData(TypedDict):
+    payments: list[InvoicePayment]
     header: InvoiceHeader
     items: list[InvoiceItem]
     summary: InvoiceSummary

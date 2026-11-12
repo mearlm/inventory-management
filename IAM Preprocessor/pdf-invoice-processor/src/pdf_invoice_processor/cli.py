@@ -54,7 +54,7 @@ def parse_arguments():
         "--vendor",
         type=str,
         required=True,
-        help="Vendor name used to load data/vendors/<vendor>.json",
+        help="Vendor name (amazon uses a Python adapter; others use JSON config)",
     )
 
     return parser.parse_args()
@@ -84,10 +84,11 @@ def main():
     args = parse_arguments()
     output_path = Path(args.output)
 
-    config = load_vendor_config(args.vendor)
+    vendor = args.vendor.strip().lower()
+    config = None if vendor == "amazon" else load_vendor_config(vendor)
     input_files = resolve_input_files(args)
 
-    invoices, stats = process_batch(input_files, config)
+    invoices, stats = process_batch(input_files, config, vendor=vendor)
 
     artifacts = publish_batch(invoices, output_path)
 

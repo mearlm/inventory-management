@@ -9,10 +9,17 @@ from .status import rollup_status, add_status_message
 
 def process_invoice(
     input_file: str,
-    config: VendorConfig,
+    config: VendorConfig | None = None,
+    vendor: str = "",
 ) -> ProcessedInvoice:
     raw_text: str = read_pdf(input_file)
-    extracted_data: ExtractedInvoiceData = extract_invoice_data(raw_text, config)
+    if vendor.lower() == "amazon":
+        from .amazon import extract_amazon_invoice
+        extracted_data: ExtractedInvoiceData = extract_amazon_invoice(raw_text)
+    else:
+        if config is None:
+            raise ValueError("Vendor configuration required")
+        extracted_data = extract_invoice_data(raw_text, config)
     structured_data: InvoiceData = parse_data(extracted_data)
     is_valid: bool
     validation_message: str

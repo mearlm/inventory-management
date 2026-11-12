@@ -63,3 +63,29 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
+## Amazon Printable Order Summary (first-pass adapter)
+
+Run from the project directory after installing dependencies (e.g. `pip install -r requirements.txt` and `pip install -e .`):
+
+```bash
+python -m pdf_invoice_processor "/path/to/Amazon/PDFs" "/path/to/output" --vendor amazon
+```
+
+The same command supports `--vendor yami` (JSON-configured extraction).
+
+The existing `activity_headers.csv` and `activity_lines.csv` schemas are unchanged.
+For Amazon, `activity_payments.csv` is also written, with one row per payment
+reported on the Printable Order Summary. Payments are proposed reconciliation
+entries, not bank-verified charges. Discounts remain separate in the header,
+with negative amounts; they are not silently allocated to merchandise lines.
+
+The adapter verifies each shipment subtotal, shipment total, combined promotions,
+order total, and individual item extensions. A mismatch in listed payments marks
+the order REVIEW. It is designed for text-based Amazon **Printable Order Summary**
+PDFs, not every possible seller-issued invoice or scanned document.
+
+Run the Amazon sample test:
+
+```bash
+python -m unittest tests.test_amazon -v
+```
